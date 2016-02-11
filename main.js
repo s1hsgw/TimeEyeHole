@@ -10,6 +10,7 @@
 
     var backgroundLayer,
         frontLayer,
+        svgout = document.getElementById('svgout'),
         eyehole = document.getElementById('eyehole'),
         prevX = 0,
         prevY = 0,
@@ -17,7 +18,10 @@
         cy = 0.5 * window.innerHeight,
         isDragging = false,
         dx = 0,
-        dy = 0;
+        dy = 0,
+        eventLogs = {
+            'events': []
+        };
 
 
     /*-----------------------------------
@@ -35,7 +39,8 @@
 
     //Settings for front layer
     var frLayerSettings = {
-        images: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg", "img/6.jpg", "img/7.jpg", "img/8.jpg", "img/9.jpg", "img/10.jpg", "img/11.jpg"],
+        //        images: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg", "img/6.jpg", "img/7.jpg", "img/8.jpg", "img/9.jpg", "img/10.jpg", "img/11.jpg"],
+        images: ["img/past.png"],
         interval: 200, //msec
         autoRotate: true
     }
@@ -48,10 +53,10 @@
     updateEyeHoleXY(cx, cy);
 
     //Event Handling
-    addEventListers(eyehole);
+    addEventListers(svgout);
 
-    var eyeholeLog = EventLogger(eyehole);
-    // var brLayerLog = EventLogger(backgroundLayer.dom);
+    var eyeholeLog = EventLogger(eyehole, eventLogs);
+    var layerLog = EventLogger(svgout, eventLogs);
 
 
     /*-----------------------------------
@@ -90,7 +95,11 @@
         prevY = e.clientY;
 
         //Start recording drag event log
-        eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY);
+        if (e.srcElement === eyehole) {
+            eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY);
+        } else {
+            layerLog.dragstart('viewDrag', e.clientX, e.clientY);
+        }
 
     }
 
@@ -98,7 +107,12 @@
         e.preventDefault();
 
         if (isDragging) {
-            logDragEnd(e, eyeholeLog);
+
+            if (e.srcElement === eyehole) {
+                dragEndLog(e, eyeholeLog);
+            } else {
+                dragEndLog(e, layerLog);
+            }
         }
 
         isDragging = false;
@@ -113,28 +127,29 @@
 
         if (!isDragging) return false;
 
-        backgroundLayer.controls.noRotate = true;
-        frontLayer.controls.noRotate = true;
+        if (e.srcElement === eyehole) {
+            backgroundLayer.controls.noRotate = true;
+            frontLayer.controls.noRotate = true;
 
-        //Get central coordinates of Time Eye-Hole
-        cx = parseFloat(eyehole.getAttribute("cx"));
-        cy = parseFloat(eyehole.getAttribute("cy"));
+            //Get central coordinates of Time Eye-Hole
+            cx = parseFloat(eyehole.getAttribute("cx"));
+            cy = parseFloat(eyehole.getAttribute("cy"));
 
-        //Calculate the difference between previous position and current position
-        dx = e.clientX - prevX;
-        dy = e.clientY - prevY;
+            //Calculate the difference between previous position and current position
+            dx = e.clientX - prevX;
+            dy = e.clientY - prevY;
 
-        //calculate new central coordinates
-        cx += dx;
-        cy += dy;
+            //calculate new central coordinates
+            cx += dx;
+            cy += dy;
 
-        //Update previous position
-        prevX = e.clientX;
-        prevY = e.clientY;
+            //Update previous position
+            prevX = e.clientX;
+            prevY = e.clientY;
 
-        //Update view
-        updateEyeHoleXY(cx, cy);
-
+            //Update view
+            updateEyeHoleXY(cx, cy);
+        }
     }
 
     function updateEyeHoleXY(cx, cy) {
@@ -148,16 +163,25 @@
 
     }
 
-    function logDragEnd(e, log) {
+    function dragEndLog(e, draglog) {
         //get coordinates of where dragging started
-        var prevXY = log.getMouseDownXY();
+        var prevXY = draglog.getMouseDownXY();
 
         //figure out if mouse coordinates has changed (=dragged)
         if (e.clientX !== prevXY[0] || e.clientY !== prevXY[1]) {
             //Finish recording drag event log
-            log.dragend(e.clientX, e.clientY);
+            var log = draglog.dragend(e.clientX, e.clientY);
+
+            eventLogs.events.push(log);
+            console.table(eventLogs.events);
+
+            saveLog();
         }
-        log.restart();
+        draglog.restart();
+    }
+
+    function saveLog() {
+        localStorage.setItem('eventLogs', JSON.stringify(eventLogs));
     }
 
     //For Debugging Purposes
