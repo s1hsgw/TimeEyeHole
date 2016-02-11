@@ -14,8 +14,8 @@
         eyehole = document.getElementById('eyehole'),
         prevX = 0,
         prevY = 0,
-        cx = 0.5 * window.innerWidth,
-        cy = 0.5 * window.innerHeight,
+        cx,
+        cy,
         isDragging = false,
         dx = 0,
         dy = 0,
@@ -49,8 +49,8 @@
     var backgroundLayer = activateThetaViewer("back", bgLayerSettings);
     var frontLayer = activateThetaViewer("front", frLayerSettings);
 
-    // Set central coordinates of clip-path and eyehole
-    updateEyeHoleXY(cx, cy);
+    // Setup EyeHole UI
+    updateEyeHole();
 
     //Event Handling
     addEventListers(svgout);
@@ -148,19 +148,35 @@
             prevY = e.clientY;
 
             //Update view
-            updateEyeHoleXY(cx, cy);
+            updateEyeHole(cx, cy);
         }
     }
 
-    function updateEyeHoleXY(cx, cy) {
+    function updateEyeHole(cx, cy) {
 
+        //Set central coordinates of eyehole
+        cx = cx || 0.5 * window.innerWidth;
+        cy = cy || 0.5 * window.innerHeight;
         eyehole.setAttribute("cx", cx + 'px');
         eyehole.setAttribute("cy", cy + 'px');
 
-        //Update clip-path
-        frontLayer.dom.style["-webkit-clip-path"] = 'circle(' + 250 + 'px at ' + cx + 'px ' + cy + 'px)';
-        frontLayer.dom.style["clip-path"] = 'circle(' + 250 + 'px at ' + cx + 'px ' + cy + 'px)';
+        //Set radius of eyehole
+        var r = calcEyeHoleRadius();
+        eyehole.setAttribute("r", r + 'px');
 
+        //Set clip-path
+        frontLayer.dom.style["-webkit-clip-path"] = 'circle(' + r + 'px at ' + cx + 'px ' + cy + 'px)';
+        frontLayer.dom.style["clip-path"] = 'circle(' + r + 'px at ' + cx + 'px ' + cy + 'px)';
+
+    }
+
+    function calcEyeHoleRadius() {
+        var windowArea = window.innerWidth * window.innerHeight;
+        var eyeholeArea = 0.15 * windowArea;
+
+        var radius = Math.round(Math.sqrt(eyeholeArea / Math.PI));
+
+        return radius;
     }
 
     function dragEndLog(e, draglog) {
