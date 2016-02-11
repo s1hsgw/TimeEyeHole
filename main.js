@@ -1,5 +1,7 @@
 (function () {
 
+    'use strict';
+
     /*-----------------------------------
 
        Variables
@@ -8,10 +10,9 @@
 
     var backgroundLayer,
         frontLayer,
-        interface = document.getElementById('interface'),
         eyehole = document.getElementById('eyehole'),
-        mousedownX = 0,
-        mousedownY = 0,
+        prevX = 0,
+        prevY = 0,
         cx = 0.5 * window.innerWidth,
         cy = 0.5 * window.innerHeight,
         isDragging = false,
@@ -47,7 +48,10 @@
     updateEyeHoleXY(cx, cy);
 
     //Event Handling
-    addEventListers(interface);
+    addEventListers(eyehole);
+
+    var eyeholeLog = EventLogger(eyehole);
+    // var brLayerLog = EventLogger(backgroundLayer.dom);
 
 
     /*-----------------------------------
@@ -84,10 +88,18 @@
         //save previous mouse position
         prevX = e.clientX;
         prevY = e.clientY;
+
+        //Start recording drag event log
+        eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY);
+
     }
 
     function onMouseUp(e) {
         e.preventDefault();
+
+        if (isDragging) {
+            logDragEnd(e, eyeholeLog);
+        }
 
         isDragging = false;
 
@@ -134,6 +146,18 @@
         frontLayer.dom.style["-webkit-clip-path"] = 'circle(' + 250 + 'px at ' + cx + 'px ' + cy + 'px)';
         frontLayer.dom.style["clip-path"] = 'circle(' + 250 + 'px at ' + cx + 'px ' + cy + 'px)';
 
+    }
+
+    function logDragEnd(e, log) {
+        //get coordinates of where dragging started
+        var prevXY = log.getMouseDownXY();
+
+        //figure out if mouse coordinates has changed (=dragged)
+        if (e.clientX !== prevXY[0] || e.clientY !== prevXY[1]) {
+            //Finish recording drag event log
+            log.dragend(e.clientX, e.clientY);
+        }
+        log.restart();
     }
 
     //For Debugging Purposes
