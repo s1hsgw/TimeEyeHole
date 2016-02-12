@@ -14,8 +14,8 @@
         eyehole = document.getElementById('eyehole'),
         prevX = 0,
         prevY = 0,
-        cx,
-        cy,
+        cx = window.innerWidth * 0.5,
+        cy = window.innerHeight * 0.5,
         isDragging = false,
         dx = 0,
         dy = 0,
@@ -50,7 +50,7 @@
     var frontLayer = activateThetaViewer("front", frLayerSettings);
 
     // Setup EyeHole UI
-    updateEyeHole();
+    updateEyeHole(cx, cy);
 
     //Event Handling
     addEventListers(svgout);
@@ -96,7 +96,7 @@
 
         //Start recording drag event log
         if (e.srcElement === eyehole) {
-            eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY);
+            eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY, cx, cy);
         } else {
             layerLog.dragstart('viewDrag', e.clientX, e.clientY);
         }
@@ -109,7 +109,7 @@
         if (isDragging) {
 
             if (e.srcElement === eyehole) {
-                dragEndLog(e, eyeholeLog);
+                dragEndLog(e, eyeholeLog, cx, cy);
             } else {
                 dragEndLog(e, layerLog);
             }
@@ -155,8 +155,8 @@
     function updateEyeHole(cx, cy) {
 
         //Set central coordinates of eyehole
-        cx = cx || 0.5 * window.innerWidth;
-        cy = cy || 0.5 * window.innerHeight;
+        cx = cx;
+        cy = cy;
         eyehole.setAttribute("cx", cx + 'px');
         eyehole.setAttribute("cy", cy + 'px');
 
@@ -179,14 +179,14 @@
         return radius;
     }
 
-    function dragEndLog(e, draglog) {
+    function dragEndLog(e, draglog, cx, cy) {
         //get coordinates of where dragging started
         var prevXY = draglog.getMouseDownXY();
 
         //figure out if mouse coordinates has changed (=dragged)
         if (e.clientX !== prevXY[0] || e.clientY !== prevXY[1]) {
             //Finish recording drag event log
-            var log = draglog.dragend(e.clientX, e.clientY);
+            var log = draglog.dragend(e.clientX, e.clientY, cx, cy);
 
             eventLogs.events.push(log);
             console.table(eventLogs.events);
