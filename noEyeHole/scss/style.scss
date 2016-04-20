@@ -1,0 +1,65 @@
+@charset 'UTF-8';
+@import 'bourbon/bourbon'; // http://bourbon.io/
+@import '../partials/variables'; // colors, fonts etc...
+@import '../partials/mixins'; // custom mixins
+@import '../partials/layout'; // responsive grid and media queries
+
+/* --------------------------------
+
+Primary style
+
+-------------------------------- */
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 62.5%;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    font: {
+        size: 1.6rem;
+        family: $primary-font;
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* --------------------------------
+
+Layer
+
+-------------------------------- */
+
+.back,
+.front {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.back {
+    position: relative;
+}
+
+.front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    opacity: 1;
+}
+
+.svgout {
+    position: absolute;
+    z-index: 4;
+}
