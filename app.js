@@ -185,7 +185,6 @@
         frontLayer.controls.noRotate = false;
     }
 
-
     function dragEndLog(e, draglog, cx, cy) {
         //get coordinates of where dragging started
         var prevXY = draglog.getMouseDownXY();
@@ -236,7 +235,6 @@
 
         return output;
     }
-
 
     document.onkeydown = function(e) {
         var shift = e.shiftKey,

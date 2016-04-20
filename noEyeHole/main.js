@@ -31,7 +31,7 @@
     var bgLayerSettings = {
         images: ["img/present.png"],
         interval: 200, //msec
-        autoRotate: true
+        autoRotate: false
     }
 
     //Settings for front layer
@@ -39,12 +39,14 @@
         //        images: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg", "img/6.jpg", "img/7.jpg", "img/8.jpg", "img/9.jpg", "img/10.jpg", "img/11.jpg"],
         images: ["img/past.png"],
         interval: 200, //msec
-        autoRotate: true
+        autoRotate: false
     }
 
     //Activate 2 ThetaViewers
     var backgroundLayer = activateThetaViewer(back, bgLayerSettings);
     var frontLayer = activateThetaViewer(front, frLayerSettings);
+
+    console.log(front.style.zIndex);
 
     //Event Handling
     addEventListers(svgout);
@@ -96,7 +98,7 @@
 
             saveLog();
         }
-        toggleVisibility("front");
+        toggleVisibility(front);
 
         return false;
     }
@@ -148,13 +150,15 @@
 
     }
 
-    function toggleVisibility(id) {
-     var el = document.getElementById(id);
+    function toggleVisibility(element) {
+     var el = element;
 
-     if (el.style.display === '') {
-         el.style.display = 'none';
+     if (window.getComputedStyle(el).zIndex === '3') {
+        console.log("changed to -1");
+         el.style.zIndex = '-1';
      } else {
-         el.style.display = '';
+        console.log("changed to 3");
+         el.style.zIndex = '3';
      }
  }
 

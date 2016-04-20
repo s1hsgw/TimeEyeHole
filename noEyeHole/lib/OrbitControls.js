@@ -348,8 +348,9 @@ THREE.OrbitControls = function (object, domElement) {
         } else if (event.button === 2) {
             if (scope.noPan === true) return;
 
-            // state = STATE.PAN;
-            // panStart.set(event.clientX, event.clientY);
+            state = STATE.PAN;
+
+            panStart.set(event.clientX, event.clientY);
 
         }
 
@@ -418,9 +419,8 @@ THREE.OrbitControls = function (object, domElement) {
 
     }
 
-    function onMouseUp(event) {
+    function onMouseUp( /* event */ ) {
 
-        event.preventDefault();
         if (scope.enabled === false) return;
 
         scope.domElement.removeEventListener('mousemove', onMouseMove, false);
@@ -630,16 +630,16 @@ THREE.OrbitControls = function (object, domElement) {
 
     this.domElement.addEventListener('contextmenu', function (event) {
         event.preventDefault();
-        return false;
     }, false);
     this.domElement.addEventListener('mousedown', onMouseDown, false);
     this.domElement.addEventListener('mousewheel', onMouseWheel, false);
     this.domElement.addEventListener('DOMMouseScroll', onMouseWheel, false); // firefox
+
     this.domElement.addEventListener('touchstart', touchstart, false);
     this.domElement.addEventListener('touchend', touchend, false);
     this.domElement.addEventListener('touchmove', touchmove, false);
 
-    window.addEventListener('keydown', onKeyDown, false);
+    //    window.addEventListener('keydown', onKeyDown, false);
 
 };
 
