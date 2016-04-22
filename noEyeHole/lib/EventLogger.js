@@ -1,16 +1,15 @@
-(function (global, undefined) {
+(function(global, undefined) {
 
     //EventLogger Contructor
-    var EventLogger = function (element) {
+    var EventLogger = function(element) {
 
         return new EventLogger.init(element);
 
     };
 
     //EventLog Constructor
-    function EventLog(title, durationEvent) {
-        this.title = title || '';
-        this.durationEvent = durationEvent || false;
+    function EventLog(event) {
+        this.event = event || '';
     }
 
     var dragLog,
@@ -18,50 +17,52 @@
 
     EventLogger.prototype = {
 
-        dragstart: function (title, clientX, clientY, cx, cy) {
-            dragLog = new EventLog(title, true);
-            dragLog.start = (new Date()).toString();
-            dragLog.mousedownXY = [clientX, clientY];
+        dragstart: function(event, clientX, clientY, cx, cy) {
+            dragLog = new EventLog(event);
+            dragLog.start = new Date().getTime();
+            dragLog.mousedownX = clientX;
+            dragLog.mousedownY = clientY;
 
-            if (cx && cy) {
-                dragLog.eyeholeStartXY = [cx, cy];
+        },
+        dragend: function(clientX, clientY, cx, cy) {
+            dragLog.end = new Date().getTime();
+            dragLog.mouseupX = clientX;
+            dragLog.mouseupY = clientY;
+        },
+        getMouseDownXY: function() {
+            if (dragLog.mousedownX && dragLog.mousedownY) {
+                var mousedownXY = [dragLog.mousedownX, dragLog.mousedownY];
+                return mousedownXY;
             }
         },
-        dragend: function (clientX, clientY, cx, cy) {
-            dragLog.end = (new Date()).toString();
-            dragLog.mouseupXY = [clientX, clientY];
+        contextmenu: function(event, clientX, clientY) {
+            var time = new Date().getTime(),
+                x = clientX,
+                y = clientY;
 
-            if (cx && cy) {
-                dragLog.eyeholeEndXY = [cx, cy];
-            }
-
-            return this.output(dragLog);
-
-        },
-        getMouseDownXY: function () {
-            if (dragLog.mousedownXY) {
-                return dragLog.mousedownXY;
-            }
-        },
-        contextmenu: function (title, clientX, clientY) {
-            cmLog = new EventLog(title, false);
-            cmLog.start = (new Date()).toString();
-            cmLog.mousedownXY = [clientX, clientY];
-
-            return this.output(cmLog);
+            switchLog = new EventLog(event);
+            switchLog.start = time;
+            switchLog.end = time;
+            switchLog.mousedownX = x;
+            switchLog.mousedownY = y;
+            switchLog.mouseupX = x;
+            switchLog.mouseupY = y;
 
         },
-        output: function (eventLog) {
-            return eventLog;
+        outputDragLog: function() {
+            return dragLog;
         },
-        restart: function () {
+        outputSwitchLog: function() {
+            return switchLog;
+        },
+        dragrestart: function() {
             dragLog = null;
         }
 
     };
 
     // the acutal object is created here, allowing us to 'new' an object without calling 'new'
-    EventLogger.init = function (element) {
+    EventLogger.init = function(element) {
 
         var self = this;
 

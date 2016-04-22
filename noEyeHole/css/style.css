@@ -41,6 +41,9 @@ Layer
   z-index: 3;
   opacity: 1; }
 
+.frontHidden {
+  z-index: -1; }
+
 .svgout {
   position: absolute;
   z-index: 4; }
