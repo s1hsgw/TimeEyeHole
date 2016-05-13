@@ -35,7 +35,7 @@
 
     //Settings for background layer
     var bgLayerSettings = {
-        images: ["img/present.png"],
+        images: ["img/present_mod.png"],
         interval: interval, //msec
         autoRotate: autoRotate
     }
@@ -43,7 +43,7 @@
     //Settings for front layer
     var frLayerSettings = {
         // images: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg", "img/6.jpg", "img/7.jpg", "img/8.jpg", "img/9.jpg", "img/10.jpg", "img/11.jpg"],
-        images: ["img/past.png"],
+        images: ["img/past_mod.png"],
         interval: interval, //msec
         autoRotate: autoRotate
     }
@@ -131,7 +131,7 @@
         if (e.srcElement === eyehole) {
             eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY, cx, cy);
         } else {
-            layerLog.dragstart('viewDrag', e.clientX, e.clientY);
+            layerLog.dragstart('viewDrag', e.clientX, e.clientY, cx, cy);
         }
 
     }
@@ -175,7 +175,7 @@
             if (e.srcElement === eyehole) {
                 dragEndLog(e, eyeholeLog, cx, cy);
             } else {
-                dragEndLog(e, layerLog);
+                dragEndLog(e, layerLog, cx, cy);
             }
         }
 
@@ -244,13 +244,40 @@
         if (shift && ctrl) {
             switch (keycode) {
                 case 80:
-                    var filename = prompt("ファイル名を入力", "test.csv");
+
+                    var now = new Date();
+
+                    var filename = prompt("ファイル名を入力", "EyeHole_" + dateFormat(now) + "_15tm522b.csv");
                     downloadCSV(csv, filename);
+
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    // dateFormat 関数の定義
+    function dateFormat(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        var w = date.getDay();
+        var hrs = date.getHours();
+        var min = date.getMinutes();
+        var sec = date.getSeconds();
+
+        var wNames = ['日', '月', '火', '水', '木', '金', '土'];
+
+        if (m < 10) {
+            m = '0' + m;
+        }
+        if (d < 10) {
+            d = '0' + d;
+        }
+
+        // フォーマット整形済みの文字列を戻り値にする
+        return y + '年' + m + '月' + d + '日_(' + wNames[w] + ')_' + hrs + ':' + min + ':' + sec;
     }
 
     function downloadCSV(csv, filename) {

@@ -29,7 +29,7 @@
 
     //Settings for background layer
     var backSettings = {
-        images: ["img/past.png"],
+        images: ["img/past_mod.png"],
         interval: 200, //msec
         autoRotate: false
     }
@@ -37,7 +37,7 @@
     //Settings for front layer
     var frontSettings = {
         //        images: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg", "img/6.jpg", "img/7.jpg", "img/8.jpg", "img/9.jpg", "img/10.jpg", "img/11.jpg"],
-        images: ["img/present.png"],
+        images: ["img/present_mod.png"],
         interval: 200, //msec
         autoRotate: false
     }
@@ -214,7 +214,8 @@
         if (shift && ctrl) {
             switch (keycode) {
                 case 80:
-                    var filename = prompt("ファイル名を入力", "test.csv");
+                    var now = new Date();
+                    var filename = prompt("ファイル名を入力", "noEyeHole_" + dateFormat(now) + "_15tm522b.csv");
                     csv = convertToCSV(eventsArray);
                     downloadCSV(csv, filename);
                     break;
@@ -222,6 +223,29 @@
                     break;
             }
         }
+    }
+
+    // dateFormat 関数の定義
+    function dateFormat(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        var d = date.getDate();
+        var w = date.getDay();
+        var hrs = date.getHours();
+        var min = date.getMinutes();
+        var sec = date.getSeconds();
+
+        var wNames = ['日', '月', '火', '水', '木', '金', '土'];
+
+        if (m < 10) {
+            m = '0' + m;
+        }
+        if (d < 10) {
+            d = '0' + d;
+        }
+
+        // フォーマット整形済みの文字列を戻り値にする
+        return y + '年' + m + '月' + d + '日_(' + wNames[w] + ')_' + hrs +':' + min + ':' + sec;
     }
 
     function downloadCSV(csv, filename) {
