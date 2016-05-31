@@ -12,6 +12,7 @@
         frontLayer,
         svgout = document.getElementById('svgout'),
         eyehole = document.getElementById('eyehole'),
+        clip = document.getElementById('eyehole-clip'),
         interval = 300,
         autoRotate = false,
         prevX = 0,
@@ -24,7 +25,19 @@
         eventLogs = {
             'events': []
         },
-        csv;
+        csv,
+        clippath = document.getElementById('clipPath'),
+        children = clippath.children,
+        child,
+        outerPathWidth,
+        outerPathHeight,
+        tx,
+        ty,
+        baseRadius,
+        currentRadius,
+        radiusScaleRatio,
+        outerPathPositionX,
+        outerPathPositionY;
 
 
     /*-----------------------------------
@@ -62,6 +75,40 @@
     var layerLog = EventLogger(svgout);
 
 
+    // Centering clip-path
+    for (var i = 0; i < children.length; i++) {
+        child = children[i];
+
+        if (i !== 0) {
+
+            baseRadius = 215;
+            currentRadius = parseFloat(clip.getAttribute("r"));
+            radiusScaleRatio = currentRadius / baseRadius;
+
+            outerPathWidth = ((child.getBBox().width) * radiusScaleRatio) / 2;
+            outerPathHeight = ((child.getBBox().height) * radiusScaleRatio) / 2;
+
+            tx = (window.innerWidth * 0.5) - outerPathWidth;
+            ty = (window.innerHeight * 0.5) - outerPathHeight;
+
+            child.setAttribute('transform', 'translate(' + tx + ' ' + ty + ')' + ', scale(' + radiusScaleRatio + ')');
+
+        }
+
+
+    }
+
+    //outerpathのx, y座標を変数に保存しておく（onmousemoveでouterpathを移動させる際に使用する）
+    outerPathPositionX = child.getCTM().e;
+    outerPathPositionY = child.getCTM().f;
+
+    configureRotation();
+
+    setInterval(repaint, 10);
+
+
+
+
     /*-----------------------------------
 
       Functions
@@ -88,18 +135,25 @@
         cy = cy;
         eyehole.setAttribute("cx", cx + 'px');
         eyehole.setAttribute("cy", cy + 'px');
+        clip.setAttribute("cx", cx + 'px');
+        clip.setAttribute("cy", cy + 'px');
 
         //Set radius of eyehole
         var r = calcEyeHoleRadius();
-        eyehole.setAttribute("r", r + 'px');
 
-        //Set clip-path
-        frontLayer.dom.style["-webkit-clip-path"] = 'circle(' + r + 'px at ' + cx + 'px ' + cy + 'px)';
-        frontLayer.dom.style["clip-path"] = 'circle(' + r + 'px at ' + cx + 'px ' + cy + 'px)';
+        eyehole.setAttribute("r", r + 'px');
+        clip.setAttribute("r", r + 'px');
+
+        //repaint
+
+        $('#front').hide().show(0);
 
     }
 
     function calcEyeHoleRadius() {
+
+        //画面の12.5%がTime Eye-Holeになるよう半径を計算する
+
         var windowArea = window.innerWidth * window.innerHeight;
         var eyeholeArea = 0.125 * windowArea;
 
@@ -110,6 +164,22 @@
 
 
     /* Event Handling functions */
+
+    function repaint() {
+        $('#front').hide().show(0);
+    }
+
+    function configureRotation() {
+        var outerpath = document.getElementById('outer-clip');
+        var rotation = document.getElementById('rotation');
+
+        var rotateCenterX = outerpath.getBBox().width/2;
+        var rotateCenterY = outerpath.getBBox().height/2;
+
+        rotation.setAttribute('from', '0 ' + rotateCenterX + ' ' + rotateCenterY);
+        rotation.setAttribute('to', '360 ' + rotateCenterX + ' ' + rotateCenterY);
+
+    }
 
     function addEventListeners(element) {
         element.addEventListener('mousedown', onMouseDown, false);
@@ -154,9 +224,29 @@
             dx = e.clientX - prevX;
             dy = e.clientY - prevY;
 
-            //calculate new central coordinates
-            cx += dx;
-            cy += dy;
+            var clippath = document.getElementById('clipPath'),
+                children = clippath.children,
+                child;
+
+            for (var i = 0; i < children.length; i++) {
+                child = children[i];
+
+                if (i === 0) {
+                    //calculate new central coordinates
+                    cx += dx;
+                    cy += dy;
+                } else {
+                    //マウスの移動量をsvgの座標値に加算し新しい座標を求める
+
+                    outerPathPositionX += dx;
+                    outerPathPositionY += dy;
+
+                    child.setAttribute('transform', 'translate(' + outerPathPositionX + ' ' + outerPathPositionY + ')' + ', scale(' + radiusScaleRatio + ')');
+                }
+
+
+            }
+
 
             //Update previous position
             prevX = e.clientX;

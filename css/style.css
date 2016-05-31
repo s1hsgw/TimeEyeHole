@@ -38,12 +38,15 @@ Layer
   position: absolute;
   top: 0;
   left: 0;
-  clip-path: url(#clippath);
-  -webkit-clip-path: url(#clippath);
-  z-index: 3; }
+  z-index: 3;
+  -webkit-clip-path: url(#clipPath); }
 
 .svgout {
   position: absolute;
   z-index: 4; }
+
+.svgout2 {
+  position: absolute;
+  z-index: -4; }
 
 /*# sourceMappingURL=style.css.map */
