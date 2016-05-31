@@ -29,8 +29,8 @@
         clippath = document.getElementById('clipPath'),
         children = clippath.children,
         child,
-        outerPathWidth,
-        outerPathHeight,
+        outerPathCX,
+        outerPathCY,
         tx,
         ty,
         baseRadius,
@@ -81,16 +81,20 @@
 
         if (i !== 0) {
 
+            //スケール比を円の半径から求める
             baseRadius = 215;
             currentRadius = parseFloat(clip.getAttribute("r"));
             radiusScaleRatio = currentRadius / baseRadius;
 
-            outerPathWidth = ((child.getBBox().width) * radiusScaleRatio) / 2;
-            outerPathHeight = ((child.getBBox().height) * radiusScaleRatio) / 2;
+            //outerpathの中心点までの幅と高さを求める
+            outerPathCX = (child.getBBox().width * radiusScaleRatio) / 2;
+            outerPathCY = (child.getBBox().height  * radiusScaleRatio) / 2;
 
-            tx = (window.innerWidth * 0.5) - outerPathWidth;
-            ty = (window.innerHeight * 0.5) - outerPathHeight;
+            tx = (window.innerWidth * 0.5) - outerPathCX;
+            ty = (window.innerHeight * 0.5) - outerPathCY;
 
+
+            //outerpathをリサイズして画面の中央に配置
             child.setAttribute('transform', 'translate(' + tx + ' ' + ty + ')' + ', scale(' + radiusScaleRatio + ')');
 
         }
@@ -173,8 +177,8 @@
         var outerpath = document.getElementById('outer-clip');
         var rotation = document.getElementById('rotation');
 
-        var rotateCenterX = outerpath.getBBox().width/2;
-        var rotateCenterY = outerpath.getBBox().height/2;
+        var rotateCenterX = (outerpath.getBBox().width/2);
+        var rotateCenterY = (outerpath.getBBox().height/2);
 
         rotation.setAttribute('from', '0 ' + rotateCenterX + ' ' + rotateCenterY);
         rotation.setAttribute('to', '360 ' + rotateCenterX + ' ' + rotateCenterY);
