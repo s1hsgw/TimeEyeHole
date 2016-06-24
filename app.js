@@ -82,13 +82,13 @@
         if (i !== 0) {
 
             //スケール比を円の半径から求める
-            baseRadius = 215;
+            baseRadius = 136;
             currentRadius = parseFloat(clip.getAttribute("r"));
             radiusScaleRatio = currentRadius / baseRadius;
 
             //outerpathの中心点までの幅と高さを求める
             outerPathCX = (child.getBBox().width * radiusScaleRatio) / 2;
-            outerPathCY = (child.getBBox().height  * radiusScaleRatio) / 2;
+            outerPathCY = (child.getBBox().height * radiusScaleRatio) / 2;
 
             tx = (window.innerWidth * 0.5) - outerPathCX;
             ty = (window.innerHeight * 0.5) - outerPathCY;
@@ -109,8 +109,6 @@
     configureRotation();
 
     setInterval(repaint, 10);
-
-
 
 
     /*-----------------------------------
@@ -154,42 +152,47 @@
 
     }
 
+
+    //EyeHoleの半径を画面の高さと横幅から求める関数
     function calcEyeHoleRadius() {
 
         //画面の12.5%がTime Eye-Holeになるよう半径を計算する
 
         var windowArea = window.innerWidth * window.innerHeight;
-        var eyeholeArea = 0.125 * windowArea;
+        var eyeholeArea = 0.05 * windowArea;
 
         var radius = Math.round(Math.sqrt(eyeholeArea / Math.PI));
 
         return radius;
     }
 
-
-    /* Event Handling functions */
-
+    //画面を再描画する関数
     function repaint() {
         $('#front').hide().show(0);
     }
 
+    //outerpathの回転設定（角度・中心）
     function configureRotation() {
         var outerpath = document.getElementById('outer-clip');
         var rotation = document.getElementById('rotation');
 
-        var rotateCenterX = (outerpath.getBBox().width/2);
-        var rotateCenterY = (outerpath.getBBox().height/2);
+        var rotateCenterX = (outerpath.getBBox().width / 2);
+        var rotateCenterY = (outerpath.getBBox().height / 2);
 
         rotation.setAttribute('from', '0 ' + rotateCenterX + ' ' + rotateCenterY);
         rotation.setAttribute('to', '360 ' + rotateCenterX + ' ' + rotateCenterY);
 
     }
 
+
+    /* Event Handling functions */
+
     function addEventListeners(element) {
         element.addEventListener('mousedown', onMouseDown, false);
         element.addEventListener('mousemove', onMouseMove, false);
         element.addEventListener('mouseup', onMouseUp, false);
         element.addEventListener('mouseout', onMouseUp, false);
+        document.addEventListener('keydown', onKeyDown, false);
     }
 
     function onMouseDown(e) {
@@ -279,6 +282,27 @@
         frontLayer.controls.noRotate = false;
     }
 
+    function onKeyDown(e) {
+        var shift = e.shiftKey,
+            ctrl = e.ctrlKey,
+            keycode = e.keyCode;
+
+        if (shift && ctrl) {
+            switch (keycode) {
+                case 80:
+
+                    var now = new Date();
+
+                    var filename = prompt("ファイル名を入力", "EyeHole_" + dateFormat(now) + "_15tm522b.csv");
+                    downloadCSV(csv, filename);
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     function dragEndLog(e, draglog, cx, cy) {
         //get coordinates of where dragging started
         var prevXY = draglog.getMouseDownXY();
@@ -328,27 +352,6 @@
         output = header + body;
 
         return output;
-    }
-
-    document.onkeydown = function(e) {
-        var shift = e.shiftKey,
-            ctrl = e.ctrlKey,
-            keycode = e.keyCode;
-
-        if (shift && ctrl) {
-            switch (keycode) {
-                case 80:
-
-                    var now = new Date();
-
-                    var filename = prompt("ファイル名を入力", "EyeHole_" + dateFormat(now) + "_15tm522b.csv");
-                    downloadCSV(csv, filename);
-
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     // dateFormat 関数の定義
