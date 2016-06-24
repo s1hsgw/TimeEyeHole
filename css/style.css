@@ -39,8 +39,14 @@ Layer
   top: 0;
   left: 0;
   z-index: 3;
+  opacity: 0.6;
   -webkit-clip-path: url(#clipPath); }
 
+@keyframes fade {
+  0% {
+    opacity: 0.6; }
+  100% {
+    opacity: 0; } }
 .svgout {
   position: absolute;
   z-index: 4; }

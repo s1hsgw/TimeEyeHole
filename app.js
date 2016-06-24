@@ -106,9 +106,9 @@
     outerPathPositionX = child.getCTM().e;
     outerPathPositionY = child.getCTM().f;
 
-    configureRotation();
+    // configureRotation();
 
-    setInterval(repaint, 10);
+    // setInterval(repaint, 10);
 
 
     /*-----------------------------------
@@ -143,7 +143,7 @@
         //Set radius of eyehole
         var r = calcEyeHoleRadius();
 
-        eyehole.setAttribute("r", r + 'px');
+        eyehole.setAttribute("r", r * 2.59 + 'px');
         clip.setAttribute("r", r + 'px');
 
         //repaint
@@ -219,6 +219,8 @@
 
         if (!isDragging) return false;
 
+        $('.front').css('animation-play-state', 'paused');
+
         if (e.srcElement === eyehole) {
             backgroundLayer.controls.noRotate = true;
             frontLayer.controls.noRotate = true;
@@ -266,6 +268,9 @@
 
     function onMouseUp(e) {
         e.preventDefault();
+
+
+        $('.front').css('animation-play-state', 'running');
 
         if (isDragging) {
 
