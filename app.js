@@ -22,9 +22,7 @@
         isDragging = false,
         dx = 0,
         dy = 0,
-        eventLogs = {
-            'events': []
-        },
+        eventLogs = {'events': []},
         csv,
         clippath = document.getElementById('clipPath'),
         children = clippath.children,
@@ -37,7 +35,8 @@
         currentRadius,
         radiusScaleRatio,
         outerPathPositionX,
-        outerPathPositionY;
+        outerPathPositionY,
+        viewDragging = false;
 
 
     /*-----------------------------------
@@ -103,11 +102,10 @@
     }
 
     //outerpathのx, y座標を変数に保存しておく（onmousemoveでouterpathを移動させる際に使用する）
-    outerPathPositionX = child.getCTM().e;
-    outerPathPositionY = child.getCTM().f;
+    // outerPathPositionX = child.getCTM().e;
+    // outerPathPositionY = child.getCTM().f;
 
     // configureRotation();
-
     // setInterval(repaint, 10);
 
 
@@ -143,7 +141,7 @@
         //Set radius of eyehole
         var r = calcEyeHoleRadius();
 
-        eyehole.setAttribute("r", r * 2.59 + 'px');
+        eyehole.setAttribute("r", r + 'px');
         clip.setAttribute("r", r + 'px');
 
         //repaint
@@ -156,10 +154,10 @@
     //EyeHoleの半径を画面の高さと横幅から求める関数
     function calcEyeHoleRadius() {
 
-        //画面の12.5%がTime Eye-Holeになるよう半径を計算する
+        //画面の30%がTime Eye-Holeになるよう半径を計算する
 
         var windowArea = window.innerWidth * window.innerHeight;
-        var eyeholeArea = 0.05 * windowArea;
+        var eyeholeArea = 0.3 * windowArea;
 
         var radius = Math.round(Math.sqrt(eyeholeArea / Math.PI));
 
@@ -191,7 +189,7 @@
         element.addEventListener('mousedown', onMouseDown, false);
         element.addEventListener('mousemove', onMouseMove, false);
         element.addEventListener('mouseup', onMouseUp, false);
-        element.addEventListener('mouseout', onMouseUp, false);
+        // element.addEventListener('mouseout', onMouseUp, false);
         document.addEventListener('keydown', onKeyDown, false);
     }
 
@@ -205,12 +203,27 @@
         prevY = e.clientY;
 
         //Start recording drag event log
-        if (e.srcElement === eyehole) {
+        if (isInsideEyehole(e)) {
             eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY, cx, cy);
+            viewDragging = false;
         } else {
             layerLog.dragstart('viewDrag', e.clientX, e.clientY, cx, cy);
+            viewDragging = true;
         }
 
+    }
+
+    function isInsideEyehole(e) {
+        var diffX = e.clientX - cx,
+            diffY = e.clientY - cy,
+            diff = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2)),
+            radius = parseFloat(clip.getAttribute("r"));
+
+        if (diff <= radius) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function onMouseMove(e) {
@@ -221,7 +234,7 @@
 
         $('.front').css('animation-play-state', 'paused');
 
-        if (e.srcElement === eyehole) {
+        if (!viewDragging) {
             backgroundLayer.controls.noRotate = true;
             frontLayer.controls.noRotate = true;
 
@@ -269,12 +282,11 @@
     function onMouseUp(e) {
         e.preventDefault();
 
-
         $('.front').css('animation-play-state', 'running');
 
         if (isDragging) {
 
-            if (e.srcElement === eyehole) {
+            if (!viewDragging) {
                 dragEndLog(e, eyeholeLog, cx, cy);
             } else {
                 dragEndLog(e, layerLog, cx, cy);
@@ -300,6 +312,7 @@
 
                     var filename = prompt("ファイル名を入力", "EyeHole_" + dateFormat(now) + "_15tm522b.csv");
                     downloadCSV(csv, filename);
+                    localStorage.removeItem('eventLogs');
 
                     break;
                 default:
@@ -325,9 +338,16 @@
         draglog.dragrestart();
     }
 
+    /*-----------------------------------
+
+     functions for generating CSV File
+
+    ----------------------------------*/
+
+    //Convert JavaScript Object to CSV format
     function convertToCSV(objArray) {
 
-        // localStorage.setItem('eventLogs', JSON.stringify(eventLogs));
+        localStorage.setItem('eventLogs', JSON.stringify(eventLogs));
 
         var array = objArray;
         var header = [];
@@ -359,7 +379,7 @@
         return output;
     }
 
-    // dateFormat 関数の定義
+    // タイムスタンプを日付形式に整形する関数
     function dateFormat(date) {
         var y = date.getFullYear();
         var m = date.getMonth() + 1;
@@ -382,6 +402,15 @@
         return y + '年' + m + '月' + d + '日_(' + wNames[w] + ')_' + hrs + ':' + min + ':' + sec;
     }
 
+    // 文字列から，Unicodeコードポイントの配列を作る
+    function str_to_unicode_array(str) {
+        var arr = [];
+        for (var i = 0; i < str.length; i++) {
+            arr.push(str.charCodeAt(i));
+        }
+        return arr;
+    };
+
     function downloadCSV(csv, filename) {
         // Unicodeコードポイントの配列に変換する
         var unicode_array = str_to_unicode_array(csv);
@@ -402,20 +431,5 @@
 
     }
 
-    // 文字列から，Unicodeコードポイントの配列を作る
-    function str_to_unicode_array(str) {
-        var arr = [];
-        for (var i = 0; i < str.length; i++) {
-            arr.push(str.charCodeAt(i));
-        }
-        return arr;
-    };
-
-
-
-    //For Debugging Purposes
-    function log(value, attribute) {
-        return console.log(value, attribute);
-    }
 
 }());

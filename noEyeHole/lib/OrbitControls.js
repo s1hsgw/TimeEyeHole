@@ -41,7 +41,7 @@ THREE.OrbitControls = function (object, domElement) {
     // This option actually enables dollying in and out; left as "zoom" for
     // backwards compatibility
     this.noZoom = false;
-    this.zoomSpeed = 1.0;
+    this.zoomSpeed = 3.0;
 
     // Limits to how far you can dolly in and out
     this.minDistance = 0;
@@ -52,7 +52,7 @@ THREE.OrbitControls = function (object, domElement) {
     this.rotateSpeed = 1.0;
 
     // Set to true to disable this control
-    this.noPan = false;
+    this.noPan = true;
     this.keyPanSpeed = 7.0; // pixels moved per arrow key push
 
     // Set to true to automatically rotate around the target
@@ -440,11 +440,11 @@ THREE.OrbitControls = function (object, domElement) {
 
         if (event.wheelDelta !== undefined) { // WebKit / Opera / Explorer 9
 
-            delta = event.wheelDelta;
+            delta = event.wheelDelta * 0.05;
 
         } else if (event.detail !== undefined) { // Firefox
 
-            delta = -event.detail;
+            delta = -event.detail * 0.05;
 
         }
 

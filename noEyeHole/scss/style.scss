@@ -57,6 +57,8 @@ Layer
     left: 0;
     z-index: 3;
     opacity: 1;
+    animation: fade 1.5s linear 0s infinite alternate;
+    -webkit-clip-path: url(#clipPath);
 }
 
 .frontHidden {
@@ -67,3 +69,17 @@ Layer
     position: absolute;
     z-index: 4;
 }
+
+
+/* --------------------------------
+
+Animation
+
+-------------------------------- */
+
+@keyframes fade {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+

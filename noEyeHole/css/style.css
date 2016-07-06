@@ -39,7 +39,9 @@ Layer
   top: 0;
   left: 0;
   z-index: 3;
-  opacity: 1; }
+  opacity: 1;
+  animation: fade 1.5s linear 0s infinite alternate;
+  -webkit-clip-path: url(#clipPath); }
 
 .frontHidden {
   z-index: -1; }
@@ -47,5 +49,16 @@ Layer
 .svgout {
   position: absolute;
   z-index: 4; }
+
+/* --------------------------------
+
+Animation
+
+-------------------------------- */
+@keyframes fade {
+  0% {
+    opacity: 1; }
+  100% {
+    opacity: 0; } }
 
 /*# sourceMappingURL=style.css.map */
