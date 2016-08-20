@@ -11,15 +11,21 @@
 <body>
     <svg id="svgout" class="svgout" width="100%" height="100%">
         <g id="interface" stroke="none" fill="transparent" fill-rule="evenodd">
-            <circle id="eyehole" cx="" cy="" r="" stroke="#e1e1e1" stroke-width="10"></circle>
+            <circle id="eyehole" cx="" cy="" r="" stroke="" stroke-width="2"></circle>
         </g>
         <clipPath id="clipPath">
             <circle id="eyehole-clip" cx="" cy="" r="" />
             <!-- <path  clip-rule="evenodd" id="outer-clip" d="M352.5,0C157.82,0,0,157.82,0,352.5S157.82,705,352.5,705,705,547.18,705,352.5,547.18,0,352.5,0Zm0,490.5a138,138,0,1,1,138-138A138,138,0,0,1,352.5,490.5Z"> -->
         </clipPath>
     </svg>
-    <div id="back" class="back"></div>
-    <div id="front" class="front"></div>
+
+    <div id="viewerContainer">
+        <div id="backClone" class="back"></div>
+        <div id="frontClone" class="front"></div>
+        <div id="back" class="back"></div>
+        <div id="front" class="front"></div>
+    </div>
+
     <a href="#" id="blob" style="display: none;"></a>
     <script src="./bower_components/jquery/dist/jquery.js"></script>
     <script src="./lib/async.js"></script>

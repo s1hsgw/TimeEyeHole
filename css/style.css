@@ -32,8 +32,11 @@ Layer
   overflow: hidden; }
 
 .back {
-  position: relative;
+  position: absolute;
   z-index: 0; }
+
+.back-anim {
+  animation: switch 1.8s cubic-bezier(1, 0, 0, 1) 0.9s infinite alternate; }
 
 .front {
   position: absolute;
@@ -41,8 +44,10 @@ Layer
   left: 0;
   z-index: 1;
   opacity: 1;
-  animation: fade 1.5s linear 0s infinite alternate;
   -webkit-clip-path: url(#clipPath); }
+
+.front-anim {
+  animation: switch 1.8s cubic-bezier(0.55, 0.01, 0.46, 1.02) 0s infinite alternate; }
 
 .svgout {
   position: absolute;
@@ -53,7 +58,7 @@ Layer
 Animation
 
 -------------------------------- */
-@keyframes fade {
+@keyframes switch {
   0% {
     opacity: 1; }
   100% {

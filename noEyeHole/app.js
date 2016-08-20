@@ -72,29 +72,29 @@
     }
 
     function addEventListeners(element) {
-        document.addEventListener('contextmenu', onContextMenu, false);
+        // document.addEventListener('contextmenu', onContextMenu, false);
         element.addEventListener('mousedown', onMouseDown, false);
         element.addEventListener('mousemove', onMouseMove, false);
         element.addEventListener('mouseup', onMouseUp, false);
-        element.addEventListener('mouseout', onMouseUp, false);
+        // element.addEventListener('mouseout', onMouseUp, false);
     }
 
-    function onContextMenu(e) {
-        e.preventDefault();
+    // function onContextMenu(e) {
+    //     e.preventDefault();
 
-        if (!frontHidden) {
-            frontLog.contextmenu('switchToBack', e.clientX, e.clientY);
-            eventsArray.push(frontLog.outputSwitchLog());
-            console.table(eventsArray);
-        } else if (frontHidden) {
-            backLog.contextmenu('switchToFront', e.clientX, e.clientY);
-            eventsArray.push(backLog.outputSwitchLog());
-            console.table(eventsArray);
-        }
-        toggleVisibility(front);
+    //     if (!frontHidden) {
+    //         frontLog.contextmenu('switchToBack', e.clientX, e.clientY);
+    //         eventsArray.push(frontLog.outputSwitchLog());
+    //         console.table(eventsArray);
+    //     } else if (frontHidden) {
+    //         backLog.contextmenu('switchToFront', e.clientX, e.clientY);
+    //         eventsArray.push(backLog.outputSwitchLog());
+    //         console.table(eventsArray);
+    //     }
+    //     toggleVisibility(front);
 
-        return false;
-    }
+    //     return false;
+    // }
 
     function onMouseDown(e) {
         e.preventDefault();
@@ -120,7 +120,7 @@
         e.preventDefault();
 
 
-        $('.front').css('animation-play-state', 'running');
+        // $('.front').css('animation-play-state', 'running');
 
         if (isDragging) {
 
@@ -144,7 +144,7 @@
 
         if (!isDragging) return false;
 
-        $('.front').css('animation-play-state', 'paused');
+        // $('.front').css('animation-play-state', 'paused');
 
     }
 

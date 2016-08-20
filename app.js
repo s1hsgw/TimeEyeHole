@@ -46,23 +46,27 @@
      ----------------------------------*/
 
     //Settings for background layer
-    var bgLayerSettings = {
+    var LayerSetting1 = {
         images: ["img/present_mod.png"],
         interval: interval, //msec
         autoRotate: autoRotate
     }
-
     //Settings for front layer
-    var frLayerSettings = {
-        // images: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg", "img/6.jpg", "img/7.jpg", "img/8.jpg", "img/9.jpg", "img/10.jpg", "img/11.jpg"],
+    var LayerSetting2 = {
         images: ["img/past_mod.png"],
         interval: interval, //msec
         autoRotate: autoRotate
     }
 
     //Activate 2 ThetaViewers
-    var backgroundLayer = activateThetaViewer("back", bgLayerSettings);
-    var frontLayer = activateThetaViewer("front", frLayerSettings);
+    var backgroundLayer = activateThetaViewer("back", LayerSetting1);
+    var backgroundLayer_clone = activateThetaViewer("backClone", LayerSetting2);
+    var frontLayer = activateThetaViewer("front", LayerSetting1);
+    var frontLayer_clone = activateThetaViewer("frontClone", LayerSetting2);
+
+    //Set animation to both layers
+    $('#front').addClass('front-anim');
+    $('#back').addClass('back-anim');
 
     // Setup EyeHole UI
     updateEyeHole(cx, cy);
@@ -70,9 +74,8 @@
     //Event Handling
     addEventListeners(svgout);
 
-    var eyeholeLog = EventLogger(eyehole);
+    // var eyeholeLog = EventLogger(eyehole);
     var layerLog = EventLogger(svgout);
-
 
     // Centering clip-path
     for (var i = 0; i < children.length; i++) {
@@ -92,16 +95,12 @@
             tx = (window.innerWidth * 0.5) - outerPathCX;
             ty = (window.innerHeight * 0.5) - outerPathCY;
 
-
             //outerpathをリサイズして画面の中央に配置
             child.setAttribute('transform', 'translate(' + tx + ' ' + ty + ')' + ', scale(' + radiusScaleRatio + ')');
-
         }
-
-
     }
 
-    //outerpathのx, y座標を変数に保存しておく（onmousemoveでouterpathを移動させる際に使用する）
+    // outerpathのx, y座標を変数に保存しておく（onmousemoveでouterpathを移動させる際に使用する）
     // outerPathPositionX = child.getCTM().e;
     // outerPathPositionY = child.getCTM().f;
 
@@ -144,10 +143,7 @@
         eyehole.setAttribute("r", r + 'px');
         clip.setAttribute("r", r + 'px');
 
-        //repaint
-
-        $('#front').hide().show(0);
-
+        repaint();
     }
 
 
@@ -167,27 +163,28 @@
     //画面を再描画する関数
     function repaint() {
         $('#front').hide().show(0);
+        $('#frontClone').hide().show(0);
+        //内部でanimation関数が呼ばれるためフェードが止まってしまう可能性あり
     }
 
     //outerpathの回転設定（角度・中心）
-    function configureRotation() {
-        var outerpath = document.getElementById('outer-clip');
-        var rotation = document.getElementById('rotation');
+    // function configureRotation() {
+    //     var outerpath = document.getElementById('outer-clip');
+    //     var rotation = document.getElementById('rotation');
 
-        var rotateCenterX = (outerpath.getBBox().width / 2);
-        var rotateCenterY = (outerpath.getBBox().height / 2);
+    //     var rotateCenterX = (outerpath.getBBox().width / 2);
+    //     var rotateCenterY = (outerpath.getBBox().height / 2);
 
-        rotation.setAttribute('from', '0 ' + rotateCenterX + ' ' + rotateCenterY);
-        rotation.setAttribute('to', '360 ' + rotateCenterX + ' ' + rotateCenterY);
+    //     rotation.setAttribute('from', '0 ' + rotateCenterX + ' ' + rotateCenterY);
+    //     rotation.setAttribute('to', '360 ' + rotateCenterX + ' ' + rotateCenterY);
 
-    }
-
+    // }
 
     /* Event Handling functions */
 
     function addEventListeners(element) {
         element.addEventListener('mousedown', onMouseDown, false);
-        element.addEventListener('mousemove', onMouseMove, false);
+        // element.addEventListener('mousemove', onMouseMove, false);
         element.addEventListener('mouseup', onMouseUp, false);
         // element.addEventListener('mouseout', onMouseUp, false);
         document.addEventListener('keydown', onKeyDown, false);
@@ -203,91 +200,96 @@
         prevY = e.clientY;
 
         //Start recording drag event log
-        if (isInsideEyehole(e)) {
-            eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY, cx, cy);
-            viewDragging = false;
-        } else {
-            layerLog.dragstart('viewDrag', e.clientX, e.clientY, cx, cy);
-            viewDragging = true;
-        }
+
+        // for experiment
+        layerLog.dragstart('viewDrag', e.clientX, e.clientY, cx, cy);
+        viewDragging = true;
+
+        // if (isInsideEyehole(e)) {
+        //     eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY, cx, cy);
+        //     viewDragging = false;
+        // } else {
+        //     layerLog.dragstart('viewDrag', e.clientX, e.clientY, cx, cy);
+        //     viewDragging = true;
+        // }
 
     }
 
-    function isInsideEyehole(e) {
-        var diffX = e.clientX - cx,
-            diffY = e.clientY - cy,
-            diff = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2)),
-            radius = parseFloat(clip.getAttribute("r"));
+    // function isInsideEyehole(e) {
+    //     var diffX = e.clientX - cx,
+    //         diffY = e.clientY - cy,
+    //         diff = Math.sqrt(Math.pow(diffX, 2) + Math.pow(diffY, 2)),
+    //         radius = parseFloat(clip.getAttribute("r"));
+    //
+    //     if (diff <= radius) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
 
-        if (diff <= radius) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function onMouseMove(e) {
-
-        e.preventDefault();
-
-        if (!isDragging) return false;
-
-        $('.front').css('animation-play-state', 'paused');
-
-        if (!viewDragging) {
-            backgroundLayer.controls.noRotate = true;
-            frontLayer.controls.noRotate = true;
-
-            //Get central coordinates of Time Eye-Hole
-            cx = parseFloat(eyehole.getAttribute("cx"));
-            cy = parseFloat(eyehole.getAttribute("cy"));
-
-            //Calculate the difference between previous position and current position
-            dx = e.clientX - prevX;
-            dy = e.clientY - prevY;
-
-            var clippath = document.getElementById('clipPath'),
-                children = clippath.children,
-                child;
-
-            for (var i = 0; i < children.length; i++) {
-                child = children[i];
-
-                if (i === 0) {
-                    //calculate new central coordinates
-                    cx += dx;
-                    cy += dy;
-                } else {
-                    //マウスの移動量をsvgの座標値に加算し新しい座標を求める
-
-                    outerPathPositionX += dx;
-                    outerPathPositionY += dy;
-
-                    child.setAttribute('transform', 'translate(' + outerPathPositionX + ' ' + outerPathPositionY + ')' + ', scale(' + radiusScaleRatio + ')');
-                }
-
-
-            }
-
-
-            //Update previous position
-            prevX = e.clientX;
-            prevY = e.clientY;
-
-            //Update view
-            updateEyeHole(cx, cy);
-        }
-    }
+    // function onMouseMove(e) {
+    //
+    //     e.preventDefault();
+    //
+    //
+    //     if (!isDragging) return false;
+    //
+    //     $('.front').css('animation-play-state', 'running');
+    //
+    //     if (!viewDragging) {
+    //         backgroundLayer.controls.noRotate = true;
+    //         backgroundLayer_clone.controls.noRotate = true;
+    //         frontLayer.controls.noRotate = true;
+    //         frontLayer_clone.controls.noRotate = true;
+    //
+    //         //Get central coordinates of Time Eye-Hole
+    //         cx = parseFloat(eyehole.getAttribute("cx"));
+    //         cy = parseFloat(eyehole.getAttribute("cy"));
+    //
+    //         //Calculate the difference between previous position and current position
+    //         dx = e.clientX - prevX;
+    //         dy = e.clientY - prevY;
+    //
+    //         var clippath = document.getElementById('clipPath'),
+    //             children = clippath.children,
+    //             child;
+    //
+    //         for (var i = 0; i < children.length; i++) {
+    //             child = children[i];
+    //
+    //             if (i === 0) {
+    //                 //calculate new central coordinates
+    //                 cx += dx;
+    //                 cy += dy;
+    //             } else {
+    //                 //マウスの移動量をsvgの座標値に加算し新しい座標を求める
+    //
+    //                 outerPathPositionX += dx;
+    //                 outerPathPositionY += dy;
+    //
+    //                 child.setAttribute('transform', 'translate(' + outerPathPositionX + ' ' + outerPathPositionY + ')' + ', scale(' + radiusScaleRatio + ')');
+    //             }
+    //         }
+    //
+    //         //Update previous position
+    //         prevX = e.clientX;
+    //         prevY = e.clientY;
+    //
+    //         //Update view
+    //         updateEyeHole(cx, cy);
+    //     }
+    // }
 
     function onMouseUp(e) {
         e.preventDefault();
 
-        $('.front').css('animation-play-state', 'running');
+        // $('.front').css('animation-play-state', 'running');
 
         if (isDragging) {
 
             if (!viewDragging) {
-                dragEndLog(e, eyeholeLog, cx, cy);
+                // dragEndLog(e, eyeholeLog, cx, cy);
             } else {
                 dragEndLog(e, layerLog, cx, cy);
             }
@@ -297,6 +299,8 @@
 
         backgroundLayer.controls.noRotate = false;
         frontLayer.controls.noRotate = false;
+        backgroundLayer_clone.controls.noRotate = false;
+        frontLayer_clone.controls.noRotate = false;
     }
 
     function onKeyDown(e) {
@@ -428,7 +432,6 @@
         link.download = filename;
 
         link.click();
-
     }
 
 
