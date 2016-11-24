@@ -1,74 +1,75 @@
 (function() {
 
-    'use strict';
+  'use strict';
 
-    /*-----------------------------------
+  /*-----------------------------------
 
-       Variables
+     Variables
 
-      ----------------------------------*/
+    ----------------------------------*/
 
-    var backgroundLayer,
-      frontLayer,
-      svgout = document.getElementById('svgout'),
-      eyerect = document.getElementById('eyerect'),
-      clip = document.getElementById('rect-clip'),
-      interval = 300,
-      autoRotate = false,
-      prevX = 0,
-      prevY = 0,
-      cx,
-      cy,
-      isDragging = false,
-      dx = 0,
-      dy = 0,
-      eventLogs = {
-        'events': []
-      },
-      csv,
-      baseRadius,
-      currentRadius,
-      radiusScaleRatio,
-      viewDragging = false;
+  var backgroundLayer,
+    frontLayer,
+    svgout = document.getElementById('svgout'),
+    eyerect = document.getElementById('eyerect'),
+    clip = document.getElementById('rect-clip'),
+    interval = 300,
+    autoRotate = false,
+    prevX = 0,
+    prevY = 0,
+    cx,
+    cy,
+    isDragging = false,
+    isPaused = false,
+    dx = 0,
+    dy = 0,
+    eventLogs = {
+      'events': []
+    },
+    csv,
+    baseRadius,
+    currentRadius,
+    radiusScaleRatio,
+    viewDragging = false;
 
 
-    /*-----------------------------------
+  /*-----------------------------------
 
-      Main program
+    Main program
 
-     ----------------------------------*/
+   ----------------------------------*/
 
-    //Settings for background layer
-    var LayerSetting1 = {
-        images: ["img/present_mod.png"],
-        interval: interval, //msec
-        autoRotate: autoRotate
-      }
-      //Settings for front layer
-    var LayerSetting2 = {
-      images: ["img/past_mod.png"],
+  //Settings for background layer
+  var LayerSetting1 = {
+      images: ["img/present_mod.png"],
       interval: interval, //msec
       autoRotate: autoRotate
     }
+    //Settings for front layer
+  var LayerSetting2 = {
+    images: ["img/past_mod.png"],
+    interval: interval, //msec
+    autoRotate: autoRotate
+  }
 
-    //Activate 2 ThetaViewers
-    var backgroundLayer = activateThetaViewer("back", LayerSetting1);
-    var backgroundLayer_clone = activateThetaViewer("backClone", LayerSetting2);
-    var frontLayer = activateThetaViewer("front", LayerSetting1);
-    var frontLayer_clone = activateThetaViewer("frontClone", LayerSetting2);
+  //Activate 2 ThetaViewers
+  var backgroundLayer = activateThetaViewer("back", LayerSetting1);
+  var backgroundLayer_clone = activateThetaViewer("backClone", LayerSetting2);
+  var frontLayer = activateThetaViewer("front", LayerSetting1);
+  var frontLayer_clone = activateThetaViewer("frontClone", LayerSetting2);
 
-    //Set animation to both layers
-    $('#front').addClass('front-anim');
-    $('#back').addClass('back-anim');
+  //Set animation to both layers
+  $('#front').addClass('front-anim');
+  $('#back').addClass('back-anim');
 
-    // Setup EyeHole UI
-    updateEyeHole();
+  // Setup EyeHole UI
+  updateEyeHole();
 
-    //Event Handling
-    addEventListeners(svgout);
+  //Event Handling
+  addEventListeners(svgout);
 
-    // var eyeholeLog = EventLogger(eyehole);
-    var layerLog = EventLogger(svgout);
+  // var eyeholeLog = EventLogger(eyehole);
+  var layerLog = EventLogger(svgout);
 
 
   /*-----------------------------------
@@ -152,6 +153,35 @@
     element.addEventListener('mouseup', onMouseUp, false);
     // element.addEventListener('mouseout', onMouseUp, false);
     document.addEventListener('keydown', onKeyDown, false);
+    document.addEventListener('dblclick', onDoubleClick, false);
+  }
+
+  function onDoubleClick(e) {
+      e.preventDefault();
+
+      var log;
+
+      $('.front-anim').toggleClass('paused');
+      $('.back-anim').toggleClass('paused');
+
+      if ($('.front-anim').hasClass('paused')) {
+        isPaused = true;
+        backgroundLayer.controls.noRotate = true;
+        backgroundLayer_clone.controls.noRotate = true;
+        frontLayer.controls.noRotate = true;
+        frontLayer_clone.controls.noRotate = true;
+        layerLog.dblclick('paused', e.clientX, e.clientY, cx, cy);
+    } else {
+        isPaused = false;
+        backgroundLayer.controls.noRotate = false;
+        backgroundLayer_clone.controls.noRotate = false;
+        frontLayer.controls.noRotate = false;
+        frontLayer_clone.controls.noRotate = false;
+        layerLog.dblclick('started', e.clientX, e.clientY, cx, cy);
+    }
+
+    eventLogs.events.push(layerLog.outputPausedLog());
+    console.table(eventLogs.events);
   }
 
   function onMouseDown(e) {
@@ -166,8 +196,10 @@
     //Start recording drag event log
 
     // for experiment
-    layerLog.dragstart('viewDrag', e.clientX, e.clientY, cx, cy);
-    viewDragging = true;
+    if(!isPaused) {
+      layerLog.dragstart('viewDrag', e.clientX, e.clientY, cx, cy);
+      viewDragging = true;
+    }
 
     // if (isInsideEyehole(e)) {
     //     eyeholeLog.dragstart('eyeholeDrag', e.clientX, e.clientY, cx, cy);
@@ -250,7 +282,7 @@
 
     // $('.front').css('animation-play-state', 'running');
 
-    if (isDragging) {
+    if (isDragging && !isPaused) {
 
       if (!viewDragging) {
         // dragEndLog(e, eyeholeLog, cx, cy);
@@ -260,11 +292,6 @@
     }
 
     isDragging = false;
-
-    backgroundLayer.controls.noRotate = false;
-    frontLayer.controls.noRotate = false;
-    backgroundLayer_clone.controls.noRotate = false;
-    frontLayer_clone.controls.noRotate = false;
   }
 
   function onKeyDown(e) {
@@ -277,6 +304,7 @@
         case 80:
 
           var now = new Date();
+          csv = convertToCSV(eventLogs.events);
 
           var filename = prompt("ファイル名を入力", "EyeHole_" + dateFormat(now) + "_15tm522b.csv");
           downloadCSV(csv, filename);
@@ -300,8 +328,6 @@
 
       eventLogs.events.push(log);
       console.table(eventLogs.events);
-
-      csv = convertToCSV(eventLogs.events);
     }
     draglog.dragrestart();
   }

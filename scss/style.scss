@@ -56,9 +56,14 @@ Layer
 .back-anim {
     // delayを変更することで位相を0,90,180に調整可能
 
-    animation: switch 1.8s cubic-bezier(1, 0, 0, 1) 0.9s infinite alternate;
+    animation: switch 0.6s cubic-bezier(1, 0, 0, 1) 0s infinite alternate;
+    // animation: switch 1.8s cubic-bezier(1, 0, 0, 1) 0.9s infinite alternate;
     // animation: switch 1.8s cubic-bezier(1, 0, 0, 1) 0s infinite alternate;
     // animation: switch 1.8s cubic-bezier(0.55, 0.01, 0.46, 1.02) 0.9s infinite alternate;
+
+    &.paused {
+      animation-play-state: paused;
+    }
 }
 
 .front {
@@ -71,8 +76,15 @@ Layer
 }
 
 .front-anim {
-    animation: switch 1.8s cubic-bezier(0.55, 0.01, 0.46, 1.02) 0s infinite alternate;
-    // animation: switch 1.8s cubic-bezier(1, 0, 0, 1) 0s infinite alternate;
+    // animation: switch 1.2s $easeInOutCubic 0s infinite alternate;
+    animation: switch 1.2s cubic-bezier(0.68, 0.01, 0.36, 1) 0s infinite alternate;
+
+    &.paused {
+      animation-play-state: paused;
+    }
+
+    // animation: switch 1.2s cubic-bezier(1, 0, 0, 1) 0s infinite alternate;
+    // animation: switch 1.2s cubic-bezier(0.55, 0.01, 0.46, 1.02) 0s infinite alternate;
 }
 
 .svgout {

@@ -40,8 +40,10 @@ Layer
   left: 0;
   z-index: 3;
   opacity: 1;
-  animation: fade 1.5s linear 0s infinite alternate;
+  animation: switch 0.6s cubic-bezier(1, 0, 0, 1) 0s infinite alternate;
   -webkit-clip-path: url(#clipPath); }
+  .front.paused {
+    animation-play-state: paused; }
 
 .frontHidden {
   z-index: -1; }
@@ -55,7 +57,7 @@ Layer
 Animation
 
 -------------------------------- */
-@keyframes fade {
+@keyframes switch {
   0% {
     opacity: 1; }
   100% {
