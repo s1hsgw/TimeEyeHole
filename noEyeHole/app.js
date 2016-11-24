@@ -157,9 +157,9 @@
       //Start recording drag event log
 
       if (!frontHidden && !isPaused) {
-        frontLog.dragstart('frontViewDrag', e.clientX, e.clientY);
+        frontLog.dragstart('viewDrag', e.clientX, e.clientY);
       } else if (frontHidden) {
-        backLog.dragstart('backViewDrag', e.clientX, e.clientY);
+        // backLog.dragstart('backViewDrag', e.clientX, e.clientY);
       }
 
     } else if (event.button === 2) {
