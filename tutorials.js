@@ -41,13 +41,13 @@
 
   //Settings for background layer
   var LayerSetting1 = {
-      images: ["img/present_mod.png"],
+      images: ["img/tutorial_mod.JPG"],
       interval: interval, //msec
       autoRotate: autoRotate
     }
     //Settings for front layer
   var LayerSetting2 = {
-    images: ["img/past_mod.png"],
+    images: ["img/tutorial.JPG"],
     interval: interval, //msec
     autoRotate: autoRotate
   }
@@ -57,9 +57,6 @@
   var backgroundLayer_clone = activateThetaViewer("backClone", LayerSetting2);
   var frontLayer = activateThetaViewer("front", LayerSetting1);
   var frontLayer_clone = activateThetaViewer("frontClone", LayerSetting2);
-
-  //データをリセット
-  localStorage.clear();
 
   //Set animation to both layers
   $('#front').addClass('front-anim');
