@@ -36,7 +36,7 @@ Layer
   z-index: 0; }
 
 .back-anim {
-  animation: switch 0.6s cubic-bezier(1, 0, 0, 1) 0s infinite alternate; }
+  animation: backAnim 0.6s linear infinite alternate; }
   .back-anim.paused {
     animation-play-state: paused; }
 
@@ -49,7 +49,7 @@ Layer
   -webkit-clip-path: url(#clipPath); }
 
 .front-anim {
-  animation: switch 1.2s cubic-bezier(0.68, 0.01, 0.36, 1) 0s infinite alternate; }
+  animation: frontAnim 1.2s cubic-bezier(0.68, 0.01, 0.36, 1) 0s infinite alternate; }
   .front-anim.paused {
     animation-play-state: paused; }
 
@@ -62,10 +62,15 @@ Layer
 Animation
 
 -------------------------------- */
-@keyframes switch {
+@keyframes frontAnim {
   0% {
     opacity: 1; }
   100% {
     opacity: 0; } }
+@keyframes backAnim {
+  0% {
+    z-index: 0; }
+  100% {
+    z-index: -1; } }
 
 /*# sourceMappingURL=style.css.map */
