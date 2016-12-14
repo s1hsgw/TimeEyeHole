@@ -34,15 +34,12 @@
   //Settings for background layer
   var backSettings = {
     images: ["img/present_mod.png"],
-    interval: 200, //msec
     autoRotate: false
   }
 
   //Settings for front layer
   var frontSettings = {
-    //        images: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg", "img/6.jpg", "img/7.jpg", "img/8.jpg", "img/9.jpg", "img/10.jpg", "img/11.jpg"],
     images: ["img/past_mod.png"],
-    interval: 200, //msec
     autoRotate: false
   }
 
@@ -133,23 +130,6 @@
     console.table(eventsArray);
 
   }
-
-  // function onContextMenu(e) {
-  //     e.preventDefault();
-
-  //     if (!frontHidden) {
-  //         frontLog.contextmenu('switchToBack', e.clientX, e.clientY);
-  //         eventsArray.push(frontLog.outputSwitchLog());
-  //         console.table(eventsArray);
-  //     } else if (frontHidden) {
-  //         backLog.contextmenu('switchToFront', e.clientX, e.clientY);
-  //         eventsArray.push(backLog.outputSwitchLog());
-  //         console.table(eventsArray);
-  //     }
-  //     toggleVisibility(front);
-
-  //     return false;
-  // }
 
   function onMouseDown(e) {
     e.preventDefault();
