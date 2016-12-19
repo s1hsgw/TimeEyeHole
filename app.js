@@ -51,6 +51,16 @@
     interval: interval, //msec
     autoRotate: autoRotate
   }
+  var LayerSetting3 = {
+    images: ["img/present_mod_edge.png"],
+    interval: interval, //msec
+    autoRotate: autoRotate
+  }
+  var LayerSetting4 = {
+    images: ["img/past_mod_edge.png"],
+    interval: interval, //msec
+    autoRotate: autoRotate
+  }
 
   //Activate 2 ThetaViewers
   var backgroundLayer = activateThetaViewer("back", LayerSetting1);
