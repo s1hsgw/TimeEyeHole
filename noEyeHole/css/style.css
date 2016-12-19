@@ -40,7 +40,7 @@ Layer
   top: 0;
   left: 0;
   z-index: 2;
-  animation: switch 0.6s linear infinite alternate; }
+  animation: switch 1.2s linear infinite alternate; }
   .front.paused {
     animation-play-state: paused; }
 
