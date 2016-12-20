@@ -52,12 +52,12 @@
     autoRotate: autoRotate
   }
   var LayerSetting3 = {
-    images: ["img/present_mod_edge.png"],
+    images: ["img/present_outline.png"],
     interval: interval, //msec
     autoRotate: autoRotate
   }
   var LayerSetting4 = {
-    images: ["img/past_mod_edge.png"],
+    images: ["img/past_outline.png"],
     interval: interval, //msec
     autoRotate: autoRotate
   }
@@ -131,7 +131,7 @@
     //画面の30%がTime Eye-Holeになるよう半径を計算する
 
     var windowArea = window.innerWidth * window.innerHeight;
-    var eyeholeArea = 0.3 * windowArea;
+    var eyeholeArea = 0.2 * windowArea;
 
     var radius = Math.round(Math.sqrt(eyeholeArea / Math.PI));
 
